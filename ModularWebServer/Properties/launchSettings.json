@@ -1,0 +1,12 @@
+{
+  "profiles": {
+    "KTVServer": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "https://localhost:58759;http://localhost:58760"
+    }
+  }
+}
