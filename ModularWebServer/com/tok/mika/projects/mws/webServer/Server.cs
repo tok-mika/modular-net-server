@@ -6,16 +6,17 @@ using System.Text;
 using System.Threading.Tasks;
 using com.tok.mika.libs.mws;
 using com.tok.mika.libs.mws.console;
+using com.tok.mika.libs.mws.module;
 
 namespace com.tok.mika.projects.mws.webServer
 {
-    internal class Server
+    internal class Server : Module
     {
         /// <summary>
         /// Статус режима разработчика
         /// </summary>
         internal bool devStatus;
-        public MainData main{ get; }
+        public MainData main { get; }
         //public HttpListener listener;
         private WebApplication? _webApp;
         private string _url;
@@ -46,8 +47,8 @@ namespace com.tok.mika.projects.mws.webServer
         /// </summary>
         public void Start(ConsoleAgent agent)
         {
-            _agent = agent; 
-            if(this.status)
+            _agent = agent;
+            if (this.status)
             {
                 _agent.ShowWarning("Web сервер уже запущен! Для повторного выполнения команды - остановите работу сервера!");
                 return;
@@ -65,7 +66,7 @@ namespace com.tok.mika.projects.mws.webServer
                     });
                 });*/
                 builder.Logging.ClearProviders();
-                if(devStatus)builder.Services.AddCors(options =>
+                if (devStatus) builder.Services.AddCors(options =>
                 {
                     options.AddPolicy("dev", policy =>
                     {
@@ -79,7 +80,7 @@ namespace com.tok.mika.projects.mws.webServer
                 _webApp = builder.Build();
                 _webApp.Map("{*path}", async context =>
                 {
-                    this.tick(context);
+                    this.tickM(context);
                 });
                 _webApp.RunAsync();
                 _agent.ShowInfo("Web сервер запущен!");
@@ -95,7 +96,7 @@ namespace com.tok.mika.projects.mws.webServer
         /// <summary>
         /// Тут творить магию по обработке запросов
         /// </summary>
-        private void tick(HttpContext context)
+        private void tickM(HttpContext context)
         {
             try
             {
@@ -115,9 +116,9 @@ namespace com.tok.mika.projects.mws.webServer
             {
                 int indexKey = context.Request.Path.ToString().LastIndexOf('.');
                 string type = "txt";
-                if(indexKey != -1)
+                if (indexKey != -1)
                 {
-                    type = context.Request.Path.ToString().Substring(indexKey+ 1);
+                    type = context.Request.Path.ToString().Substring(indexKey + 1);
                     buffer = webFiles.getFile(_agent, context.Request.Path.ToString());
                 }
                 else
@@ -166,6 +167,7 @@ namespace com.tok.mika.projects.mws.webServer
             {
                 _agent.ShowError($"Error: {exp.Message}");
             }
+            return;
         }
 
         /// <summary>
@@ -182,6 +184,46 @@ namespace com.tok.mika.projects.mws.webServer
             }
             this.status = false;
             _agent.ShowInfo("Web сервер остановлен!");
+        }
+
+        public override void onLoad(MainDataServer mainData)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void unLoad()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void onEnable()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void onDisable()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override bool tick(HttpContext context)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override string getName()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override string getShortName()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override int GetDefaultLavel()
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using com.tok.mika.libs.mws.module;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -34,15 +35,17 @@ namespace com.tok.mika.libs.mws.console
         /// Параметры/значения передаваемые коммандой
         /// </summary>
         protected CommandParameter[] parameters;
+        public Module module1 { get; }
         
-        public CommandRealisation(string command, Func<ConsoleAgent, string[], bool> realisation, string description, CommandParameter[] parameters)
+        public CommandRealisation(Module module, string command, Func<ConsoleAgent, string[], bool> realisation, string description, CommandParameter[] parameters)
         {
             this.command = command.Split(" ");
             this.realisation = realisation;
             this.description= description;
             this.parameters = parameters;
+            this.module1 = module;
         }
-        public CommandRealisation(string command, Func<ConsoleAgent, string[], bool> realisation, string description) : this(command, realisation, description, new CommandParameter[0]){}
+        public CommandRealisation(Module module, string command, Func<ConsoleAgent, string[], bool> realisation, string description) : this(module, command, realisation, description, new CommandParameter[0]){}
         /// <summary>
         /// Полная длина комманды, колличество параметров
         /// </summary>

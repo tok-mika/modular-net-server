@@ -28,17 +28,18 @@ namespace com.tok.mika.projects.mws
             _agents = new List<ConsoleAgent>();
             _log = new ConsoleLog(this);
             _agent = new ConsoleAgentCMD(this, "cmd");
+            webServerAgent = new WebServerAgent(this, "server");
             _agents.Add(_agent);
+            _agents.Add(webServerAgent);
             //this.commandsEvents = new List<WebServerCommands>();
             //this.commandsEvents.Add(new webServer.Commands(this));
             _commands = new List<CommandRealisation>();
             pluginsLoader = new PluginsLoader(this);
-            pluginsLoader.Load(_agent);
+            //pluginsLoader.Load(_agent);
             this.server = new webServer.Server(_agent, "http://127.0.0.1:8486/", this, pluginsLoader);
 
             //this.server = new webServer.Server("http://192.168.1.11:8486/", this, pluginsLoader);
             //this.server = new webServer.Server("http://10.1.30.36:8486/", this, pluginsLoader);
-            webServerAgent = new WebServerAgent(this, "server");
         }
 
 
@@ -47,10 +48,34 @@ namespace com.tok.mika.projects.mws
         {
             //-----------------
             //Вкл/Выкл ТелНет
-            _agent.ShowInfo("запуск " + GetNameService() + " " + GetVersionService());
-            TelNetServer server = new TelNetServer(this, "root", "123");
 
-            server.Start(_agent);
+            _agent.ShowInfo("запуск " + GetNameService() + " " + GetVersionService());
+            //TelNetServer server = new TelNetServer(this, "root", "123");
+
+            //загрузка стартовых команд
+            string dir = Path.Combine(this.MainDir(), "configs");
+            string file = Path.Combine(dir, "start.bat");
+            // 1. проверка/создание папки
+            if (!Directory.Exists(dir))
+            {
+                Directory.CreateDirectory(dir);
+            }
+            // 2. проверка/создание файла
+            if (!File.Exists(file))
+            {
+                File.WriteAllText(file, ""); // или дефолтный текст
+            }
+            // 3. чтение
+            string[] text = File.ReadAllText(file, Encoding.UTF8).Replace("\r", "").Split("\n");
+            foreach (string line in text)
+            {
+                if (line.IndexOf("#") == 0) continue;
+                this.SendCommand(webServerAgent, line);
+            }
+            
+
+
+            //server.Start(_agent);
             while (true)
             {
                 string? command = _agent.ReadLine();                        //получаем исходный вид комманды
@@ -192,7 +217,7 @@ namespace com.tok.mika.projects.mws
 
         public string GetVersionService()
         {
-            return "Beta v0.0.1";
+            return "Beta v0.0.2";
         }
 
         public string MainDir()
@@ -213,7 +238,7 @@ namespace com.tok.mika.projects.mws
 
         public void RemoveCommand(CommandRealisation command)
         {
-            _commands.Add(command);
+            _commands.Remove(command);
         }
 
         /// <summary>

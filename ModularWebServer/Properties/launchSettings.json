@@ -1,6 +1,6 @@
 {
   "profiles": {
-    "KTVServer": {
+    "ModularWebServer": {
       "commandName": "Project",
       "launchBrowser": true,
       "environmentVariables": {
